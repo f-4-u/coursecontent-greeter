@@ -46,10 +46,12 @@ chmod +x greeter.sh
 
 ## Exit Codes
 
+```text
 0: Script executed successfully.
 1: Another instance of the script is already running.
 2: Unable to create or access the log file.
 3: No usernames provided as arguments.
+```
 
 ## Examples
 
