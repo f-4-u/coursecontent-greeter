@@ -35,7 +35,7 @@ show_usage() {
     echo "Usage: $0 [-l <log_file>] [-lk <lock_file>] [-h] [username1] [username2] ..."
     echo "Options:"
     echo "  -l <log_file>    Specify custom log file location (default: $DEFAULT_LOG_FILE)"
-    echo "  -k <lock_file>  Specify custom lock file location (default: $DEFAULT_LOCK_FILE)"
+    echo "  -k <lock_file>   Specify custom lock file location (default: $DEFAULT_LOCK_FILE)"
     echo "  -h               Show this help message"
 
     exit 6
@@ -99,7 +99,7 @@ rm_lock() {
 # Function to check if the user has sudo permissions
 check_sudo_permissions() {
     local username="$1"
-    sudo_result=$(sudo -n -lU "$username" 2>/dev/null)
+    sudo_result=$(/usr/bin/sudo -n -lU "$username" 2>/dev/null)
 }
 
 # Function to check if a user exists on the system and belongs to specified groups
