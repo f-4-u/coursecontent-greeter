@@ -44,29 +44,40 @@ show_usage() {
     exit 6
 }
 
-# TODO: DRY 
-greet_all_users() {
+# Function to fetch system users whose shell ends with "*sh"
+get_system_users() {
+    local users=()
     while IFS=: read -r username password uid gid gecos homedir shell; do
         # Check if the shell ends with "*sh"
         if [[ "$shell" == *sh ]]; then
-            # add username to global array
-            usernames+=("$username")
+            # Add username to the array
+            users+=("$username")
         fi
     done < /etc/passwd
+    echo "${users[@]}"
 }
 
+# Function to append all system users to global variable
+greet_all_users() {
+    local users=($(get_system_users))
+
+    for username in "${users[@]}"; do
+        # add username to global array
+        usernames+=("$username")
+    done
+}
+
+# Function to show all system users
 show_users() {
-    echo 
-    echo "possible users:"
-    while IFS=: read -r username password uid gid gecos homedir shell; do
-        # Check if the shell ends with "*sh"
-        if [[ "$shell" == *sh ]]; then
-            # Print the username
-            echo "$username"
-        fi
-    done < /etc/passwd
+    local users=($(get_system_users))
+
+    echo "System users:"
     echo "----------------"
-    echo
+    for username in "${users[@]}"; do
+        echo "$username"
+    done
+    echo "----------------"
+    echo ""
 }
 
 # Process command-line options
@@ -100,6 +111,7 @@ shift "$((OPTIND - 1))"
 # Example: Print log and lock file paths and remaining arguments (usernames)
 echo "Log File: $LOG_FILE"
 echo "Lock File: $LOCK_FILE"
+echo  ""
 
 # Check if another instance of the script is running
 if [ -e "$LOCK_FILE" ]; then
@@ -241,7 +253,7 @@ if [ "$#" -eq 0 ] && [ "$skip_input" -eq 0 ]; then
             user_exists_and_in_groups "${username,,}"
         done
     else
-        echo "No username provided!"
+        echo "Error: No username provided!" >&2
         rm_lock
         exit 3
     fi
@@ -261,7 +273,8 @@ else
         done
     else
         # Error handling if both $@ and $usernames are empty
-        echo "Error: No usernames provided." >&2
+        echo "Error: No username provided!" >&2
+        rm_lock
         exit 3
     fi
 fi
