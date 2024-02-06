@@ -5,14 +5,19 @@ The Greeter Script is a bash script that greets users based on their system stat
 ## Usage
 
 ```bash
-./greeter.sh [-l <log_file>] [-k <lock_file>] [-h] [username1] [username2] ...
+./greeter.sh [-l <log_file>] [-k <lock_file>] [-a] [username1] [username2] ...
+
 Options:
--l <log_file>: Specify a custom log file location (default: $HOME/greetings.log).
--k <lock_file>: Specify a custom lock file location (default: /tmp/greeter.lock).
--h: Show the help message.
+  -a               Greet all users with an interactive shell.
+  -l <log_file>    Specify a custom log file location (default: ${HOME}/greetings.log).
+  -k <lock_file>   Specify a custom lock file location (default: /tmp/greeter.lock).
+  -s               Show users with an interactive shell and exit.
+  -h               Show this help message and exit.
 
 Examples:
-./greeter.sh -l /path/to/custom/logfile -lk /path/to/custom/lockfile user1 user2
+./greeter.sh -a
+./greeter.sh -s
+./greeter.sh -l /path/to/custom/logfile -k /path/to/custom/lockfile user1 user2
 ```
 
 ## Installation
