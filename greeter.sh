@@ -127,14 +127,6 @@ user_exists_and_in_groups() {
     fi
 }
 
-# Function to validate users
-validate_users() {
-    local username="$1"
-
-    # Check if the user exists on the system and is in specified groups
-    user_exists_and_in_groups "$username"
-}
-
 # Function to log greetings with Unix timestamps
 log_greeting() {
     local username="$1"
@@ -211,7 +203,7 @@ if [ "$#" -eq 0 ]; then
 
         # Loop through the provided usernames
         for username in "${usernames[@]}"; do
-            validate_users "${username,,}"
+            user_exists_and_in_groups "${username,,}"
         done
     else
         echo "No username provided!"
@@ -221,7 +213,7 @@ if [ "$#" -eq 0 ]; then
 else
     # Loop through the provided usernames
     for username in "$@"; do
-        validate_users "${username,,}"
+        user_exists_and_in_groups "${username,,}"
     done
 fi
 
