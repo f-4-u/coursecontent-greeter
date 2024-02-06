@@ -14,6 +14,9 @@
 # 5: Script execution failed
 # 6: Script help menu was shown
 
+# TODO:
+# - add chown and chmod for custom log/lock files
+
 # Default locations
 DEFAULT_LOG_FILE="$HOME/greetings.log"
 DEFAULT_LOCK_FILE="/tmp/greeter.lock"
@@ -33,13 +36,13 @@ ORDINARY_USERS=()
 
 # Function to display script usage
 show_usage() {
-    echo "Usage: $0 [-l <log_file>] [-k <lock_file>] [-h] [username1] [username2] ..."
+    echo "Usage: $0 [-l <log_file>] [-k <lock_file>] [-a] [username1] [username2] ..."
     echo "Options:"
-    echo "  -a               Greet all users with a interactive shell"
-    echo "  -l <log_file>    Specify custom log file location (default: $DEFAULT_LOG_FILE)"
-    echo "  -k <lock_file>   Specify custom lock file location (default: $DEFAULT_LOCK_FILE)"
-    echo "  -s               Show users with a interactive shell"
-    echo "  -h               Show this help message"
+    echo "  -a               Greet all users with an interactive shell."
+    echo "  -l <log_file>    Specify a custom log file location (default: $DEFAULT_LOG_FILE)."
+    echo "  -k <lock_file>   Specify a custom lock file location (default: $DEFAULT_LOCK_FILE)."
+    echo "  -s               Show users with an interactive shell and exit."
+    echo "  -h               Show this help message and exit."
 
     exit 6
 }
