@@ -24,6 +24,7 @@ LOCK_FILE="$DEFAULT_LOCK_FILE"
 
 # Global variable to store sudo permissions result
 sudo_result=false
+skip_input=0
 
 # Arrays to store special and ordinary users
 SPECIAL_USERS=()
@@ -32,23 +33,57 @@ ORDINARY_USERS=()
 
 # Function to display script usage
 show_usage() {
-    echo "Usage: $0 [-l <log_file>] [-lk <lock_file>] [-h] [username1] [username2] ..."
+    echo "Usage: $0 [-l <log_file>] [-k <lock_file>] [-h] [username1] [username2] ..."
     echo "Options:"
+    echo "  -a               Greet all users with a interactive shell"
     echo "  -l <log_file>    Specify custom log file location (default: $DEFAULT_LOG_FILE)"
     echo "  -k <lock_file>   Specify custom lock file location (default: $DEFAULT_LOCK_FILE)"
+    echo "  -s               Show users with a interactive shell"
     echo "  -h               Show this help message"
 
     exit 6
 }
 
+# TODO: DRY 
+greet_all_users() {
+    while IFS=: read -r username password uid gid gecos homedir shell; do
+        # Check if the shell ends with "*sh"
+        if [[ "$shell" == *sh ]]; then
+            # add username to global array
+            usernames+=("$username")
+        fi
+    done < /etc/passwd
+}
+
+show_users() {
+    echo 
+    echo "possible users:"
+    while IFS=: read -r username password uid gid gecos homedir shell; do
+        # Check if the shell ends with "*sh"
+        if [[ "$shell" == *sh ]]; then
+            # Print the username
+            echo "$username"
+        fi
+    done < /etc/passwd
+    echo "----------------"
+    echo
+}
+
 # Process command-line options
-while getopts "l:k:h" opt; do
+while getopts "l:k:h:s:a" opt; do
     case $opt in
+    a)
+        skip_input=1
+        greet_all_users
+        ;;
     l)
         LOG_FILE="$OPTARG"
         ;;
     k)
         LOCK_FILE="$OPTARG"
+        ;;
+    s)
+        show_users
         ;;
     h)
         show_usage
@@ -190,7 +225,7 @@ greet_user() {
 }
 
 # Check if at least one username is provided as a command-line argument
-if [ "$#" -eq 0 ]; then
+if [ "$#" -eq 0 ] && [ "$skip_input" -eq 0 ]; then
     echo "No usernames provided as arguments."
 
     # Prompt the user for a username
@@ -211,10 +246,24 @@ if [ "$#" -eq 0 ]; then
         exit 3
     fi
 else
-    # Loop through the provided usernames
-    for username in "$@"; do
-        user_exists_and_in_groups "${username,,}"
-    done
+    # Check if $@ is not empty or $usernames is not empty
+    if [ $# -ne 0 ] || [ ${#usernames[@]} -ne 0 ]; then
+        # If $@ is not empty, assign it to users, else assign $usernames
+        if [ $# -ne 0 ]; then
+            users=("$@")
+        else
+            users=("${usernames[@]}")
+        fi
+
+        # Loop through the provided usernames
+        for username in "${users[@]}"; do
+            user_exists_and_in_groups "${username,,}"
+        done
+    else
+        # Error handling if both $@ and $usernames are empty
+        echo "Error: No usernames provided." >&2
+        exit 3
+    fi
 fi
 
 # Sort the arrays alphabetically
