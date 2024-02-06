@@ -26,13 +26,13 @@ git clone <https://github.com/f-4-u/coursecontent-greeter.git>
 Change into the script directory:
 
 ```bash
-cd greeter-script
+cd coursecontent-greeter
 ```
 
 Make the script executable:
 
 ```bash
-chmod +x greeter.sh
+chmod u+x greeter.sh
 ```
 
 ## Program Flow
@@ -47,10 +47,13 @@ chmod +x greeter.sh
 ## Exit Codes
 
 ```text
-0: Script executed successfully.
-1: Another instance of the script is already running.
-2: Unable to create or access the log file.
-3: No usernames provided as arguments.
+0: Successful execution
+1: Another instance of the script is running
+2: Error creating or accessing lock or log file
+3: No username provided
+4: User does not exist on the system
+5: Script execution failed
+6: Script help menu was shown
 ```
 
 ## Examples
