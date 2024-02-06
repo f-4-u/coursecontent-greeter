@@ -72,29 +72,28 @@ show_users() {
     local users=($(get_system_users))
 
     echo "System users:"
-    echo "----------------"
     for username in "${users[@]}"; do
-        echo "$username"
+        echo "- $username"
     done
-    echo "----------------"
-    echo ""
 }
 
 # Process command-line options
-while getopts "l:k:h:s:a" opt; do
+while getopts "l:k:ash" opt; do
     case $opt in
     a)
         skip_input=1
         greet_all_users
+        ;;
+    s)
+        skip_input=1
+        show_users
+        exit 6
         ;;
     l)
         LOG_FILE="$OPTARG"
         ;;
     k)
         LOCK_FILE="$OPTARG"
-        ;;
-    s)
-        show_users
         ;;
     h)
         show_usage
